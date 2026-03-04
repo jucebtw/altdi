@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 import api from '../utils/api';
+import { normalizeImagePath } from '../utils/api';
 
 const Product = () => {
   const { id } = useParams();
@@ -47,7 +48,7 @@ const Product = () => {
           {product.images && product.images.length > 0 && (
             <div>
               <img
-                src={product.images[0]}
+                src={normalizeImagePath(product.images[0])}
                 alt={product.title}
                 className="img-fluid rounded"
               />
@@ -56,7 +57,7 @@ const Product = () => {
                   {product.images.slice(1).map((img, idx) => (
                     <Col key={idx} xs={4}>
                       <img
-                        src={img}
+                        src={normalizeImagePath(img)}
                         alt={`${product.title} ${idx + 2}`}
                         className="img-fluid rounded"
                       />

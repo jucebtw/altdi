@@ -8,6 +8,33 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
+// Функция для нормализации путей к изображениям
+export const normalizeImagePath = (imagePath) => {
+  if (!imagePath) return '';
+  
+  // Если путь уже относительный (начинается с /), возвращаем как есть
+  if (imagePath.startsWith('/')) {
+    return imagePath;
+  }
+  
+  // Если содержит localhost:3000, заменяем на относительный путь
+  if (imagePath.includes('localhost:3000')) {
+    return imagePath.replace(/https?:\/\/localhost:3000/, '');
+  }
+  
+  // Если содержит полный URL с доменом, оставляем как есть (для внешних изображений)
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // Если путь не начинается с /, добавляем /uploads/
+  if (!imagePath.startsWith('/uploads/')) {
+    return `/uploads/${imagePath}`;
+  }
+  
+  return imagePath;
+};
+
 // Добавление токена к запросам
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');

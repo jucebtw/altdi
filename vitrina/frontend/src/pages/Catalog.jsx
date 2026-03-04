@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
-import api from '../utils/api';
+import api, { normalizeImagePath } from '../utils/api';
 
 const Catalog = () => {
   const { user } = useAuth();
@@ -160,7 +160,7 @@ const Catalog = () => {
                     {product.images && product.images.length > 0 && (
                       <Card.Img
                         variant="top"
-                        src={product.images[0]}
+                        src={normalizeImagePath(product.images[0])}
                         style={{ height: '200px', objectFit: 'cover' }}
                       />
                     )}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Table, Alert } from 'react-bootstrap';
 import { useAuth } from '../utils/AuthContext';
-import api from '../utils/api';
+import api, { normalizeImagePath } from '../utils/api';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -81,7 +81,7 @@ const AdminDashboard = () => {
                 {product.images && product.images.length > 0 && (
                   <Card.Img
                     variant="top"
-                    src={product.images[0]}
+                    src={normalizeImagePath(product.images[0])}
                     style={{ height: '200px', objectFit: 'cover' }}
                   />
                 )}
