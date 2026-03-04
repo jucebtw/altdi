@@ -47,7 +47,7 @@ const Product = () => {
           {product.images && product.images.length > 0 && (
             <div>
               <img
-                src={`http://localhost:3000${product.images[0]}`}
+                src={product.images[0]}
                 alt={product.title}
                 className="img-fluid rounded"
               />
@@ -56,7 +56,7 @@ const Product = () => {
                   {product.images.slice(1).map((img, idx) => (
                     <Col key={idx} xs={4}>
                       <img
-                        src={`http://localhost:3000${img}`}
+                        src={img}
                         alt={`${product.title} ${idx + 2}`}
                         className="img-fluid rounded"
                       />

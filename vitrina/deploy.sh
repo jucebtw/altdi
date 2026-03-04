@@ -99,7 +99,8 @@ cd /var/www/vitrina/frontend
 
 # Создание .env для production
 if [ ! -f ".env" ]; then
-  echo "VITE_API_URL=https://altdi.ru/api" > .env
+  # Используем относительный путь для production (работает через Nginx)
+  echo "VITE_API_URL=/api" > .env
 fi
 
 # Установка зависимостей и сборка

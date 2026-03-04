@@ -81,7 +81,7 @@ const AdminDashboard = () => {
                 {product.images && product.images.length > 0 && (
                   <Card.Img
                     variant="top"
-                    src={`http://localhost:3000${product.images[0]}`}
+                    src={product.images[0]}
                     style={{ height: '200px', objectFit: 'cover' }}
                   />
                 )}
