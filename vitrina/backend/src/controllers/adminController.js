@@ -93,6 +93,44 @@ const updateProduct = async (req, res) => {
   }
 };
 
+const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const path = require('path');
+    const fs = require('fs').promises;
+
+    const product = await prisma.product.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: 'Товар не найден' });
+    }
+
+    // Удаление изображений
+    if (product.images) {
+      const images = JSON.parse(product.images);
+      for (const imagePath of images) {
+        try {
+          const fullPath = path.join(__dirname, '../../..', imagePath);
+          await fs.unlink(fullPath);
+        } catch (err) {
+          console.error('Ошибка удаления файла:', err);
+        }
+      }
+    }
+
+    await prisma.product.delete({
+      where: { id: parseInt(id) },
+    });
+
+    res.json({ message: 'Товар удален' });
+  } catch (error) {
+    console.error('Ошибка удаления товара:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+};
+
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -125,5 +163,6 @@ module.exports = {
   getAllProducts,
   getAllUsers,
   updateProduct,
+  deleteProduct,
   deleteUser,
 };

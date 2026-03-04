@@ -11,6 +11,7 @@ router.use(requireRole('Admin'));
 router.get('/products', adminController.getAllProducts);
 router.get('/users', adminController.getAllUsers);
 router.put('/products/:id', adminController.updateProduct);
+router.delete('/products/:id', adminController.deleteProduct);
 router.delete('/users/:id', adminController.deleteUser);
 
 module.exports = router;
