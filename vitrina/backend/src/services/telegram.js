@@ -35,7 +35,11 @@ const sendVerificationCode = async (telegramUsername, code) => {
         );
         return true;
       } catch (err) {
-        console.error('Не удалось отправить сообщение. Пользователь должен сначала написать боту /start');
+        console.error('Не удалось отправить сообщение по username:', err.response?.data || err.message);
+        // Более детальная информация об ошибке
+        if (err.response?.error_code === 400) {
+          console.error('Пользователь не найден или не писал боту. Username:', username);
+        }
         return false;
       }
     }

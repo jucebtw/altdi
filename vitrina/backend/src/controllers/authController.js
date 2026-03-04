@@ -69,7 +69,9 @@ const register = async (req, res) => {
     if (!sent) {
       // Если не удалось отправить, удаляем пользователя
       await prisma.user.delete({ where: { id: user.id } });
-      return res.status(500).json({ error: 'Не удалось отправить код в Telegram' });
+      return res.status(400).json({ 
+        error: 'Не удалось отправить код в Telegram. Убедитесь, что вы написали боту /start перед регистрацией. Telegram username: @' + telegram_username 
+      });
     }
 
     res.json({
@@ -78,7 +80,20 @@ const register = async (req, res) => {
     });
   } catch (error) {
     console.error('Ошибка регистрации:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
+    
+    // Более детальные сообщения об ошибках
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Пользователь с таким ФИО или Telegram уже существует' });
+    }
+    
+    if (error.message && error.message.includes('Unique constraint')) {
+      return res.status(400).json({ error: 'Пользователь уже существует' });
+    }
+    
+    res.status(500).json({ 
+      error: error.message || 'Ошибка сервера при регистрации',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 

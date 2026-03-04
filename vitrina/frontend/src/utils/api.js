@@ -15,4 +15,20 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Обработка ошибок
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Логируем ошибки для отладки
+    if (error.response) {
+      console.error('API Error:', error.response.status, error.response.data);
+    } else if (error.request) {
+      console.error('Network Error:', error.request);
+    } else {
+      console.error('Error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

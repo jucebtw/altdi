@@ -26,7 +26,9 @@ const Register = () => {
       setUserId(response.data.user_id);
       setStep(2);
     } catch (err) {
-      setError(err.response?.data?.error || 'Ошибка регистрации');
+      const errorMessage = err.response?.data?.error || err.message || 'Ошибка регистрации';
+      console.error('Ошибка регистрации:', err);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
