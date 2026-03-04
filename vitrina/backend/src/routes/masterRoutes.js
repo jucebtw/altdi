@@ -7,9 +7,17 @@ const productController = require('../controllers/productController');
 const router = express.Router();
 
 // Настройка multer для загрузки изображений
+const uploadsDir = path.join(__dirname, '../../uploads');
+const fs = require('fs');
+
+// Создать директорию uploads, если её нет
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../uploads'));
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

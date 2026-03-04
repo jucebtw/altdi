@@ -1,3 +1,12 @@
+# Исправление ошибки 500 при создании товара
+
+Выполните эту команду на сервере:
+
+```bash
+cd /var/www/vitrina/backend
+
+# Обновить productController.js
+cat > src/controllers/productController.js << 'PRODUCTCONTROLLER_EOF'
 const { PrismaClient } = require('@prisma/client');
 const Joi = require('joi');
 const path = require('path');
@@ -207,3 +216,11 @@ module.exports = {
   updateProduct,
   deleteProduct,
 };
+PRODUCTCONTROLLER_EOF
+
+# Перезапустить backend
+pm2 restart vitrina-backend
+
+# Проверить логи
+pm2 logs vitrina-backend --lines 30
+```
