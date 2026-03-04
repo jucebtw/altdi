@@ -47,9 +47,22 @@ mkdir -p /var/www/vitrina/uploads
 
 # Копирование файлов (предполагается, что файлы уже на сервере)
 # В реальном деплое используйте rsync или git clone
+# Если файлы уже скопированы, пропустите этот шаг
 
 echo -e "${YELLOW}Настройка backend...${NC}"
 cd /var/www/vitrina/backend
+
+# Проверка наличия .env файла
+if [ ! -f ".env" ]; then
+  echo -e "${YELLOW}Создание .env из примера...${NC}"
+  if [ -f ".env.example" ]; then
+    cp .env.example .env
+    echo -e "${YELLOW}⚠️  ВАЖНО: Отредактируйте /var/www/vitrina/backend/.env перед запуском!${NC}"
+  elif [ -f ".env.production.example" ]; then
+    cp .env.production.example .env
+    echo -e "${YELLOW}⚠️  ВАЖНО: Отредактируйте /var/www/vitrina/backend/.env перед запуском!${NC}"
+  fi
+fi
 
 # Установка зависимостей
 if [ -f "package.json" ]; then
@@ -73,6 +86,11 @@ pm2 save
 
 echo -e "${YELLOW}Настройка frontend...${NC}"
 cd /var/www/vitrina/frontend
+
+# Создание .env для production
+if [ ! -f ".env" ]; then
+  echo "VITE_API_URL=https://altdi.ru/api" > .env
+fi
 
 # Установка зависимостей и сборка
 if [ -f "package.json" ]; then
