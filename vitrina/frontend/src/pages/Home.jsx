@@ -21,10 +21,16 @@ const Home = () => {
                   Перейти в каталог
                 </Button>
               </Link>
-              {user && (
+              {user ? (
                 <Link to="/master">
-                  <Button variant="success" size="lg">
+                  <Button variant="success" size="lg" style={{ fontSize: '18px', padding: '12px 24px' }}>
                     ➕ Добавить товар
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/register">
+                  <Button variant="outline-success" size="lg">
+                    Стать мастером
                   </Button>
                 </Link>
               )}

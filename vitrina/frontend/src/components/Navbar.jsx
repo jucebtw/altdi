@@ -26,6 +26,9 @@ const Navbar = () => {
           <Nav>
             {user ? (
               <>
+                <Nav.Link as={Link} to="/master" className="btn btn-success text-white me-2" style={{ borderRadius: '4px' }}>
+                  ➕ Добавить товар
+                </Nav.Link>
                 <Nav.Link as={Link} to="/master">
                   Мои товары
                 </Nav.Link>

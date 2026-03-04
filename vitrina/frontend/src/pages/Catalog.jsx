@@ -53,16 +53,18 @@ const Catalog = () => {
 
   return (
     <Container className="mt-4">
-      <Row>
-        {user && (
-          <Col xs={12} className="mb-3">
+      {user && (
+        <Row className="mb-4">
+          <Col xs={12}>
             <Link to="/master">
-              <Button variant="success" size="lg" className="w-100">
+              <Button variant="success" size="lg" className="w-100" style={{ fontSize: '18px', padding: '12px' }}>
                 ➕ Добавить товар
               </Button>
             </Link>
           </Col>
-        )}
+        </Row>
+      )}
+      <Row>
         <Col md={3}>
           <Card className="mb-4">
             <Card.Header>Фильтры</Card.Header>
