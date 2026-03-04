@@ -1,4 +1,4 @@
-import { Container, Row, Col, Jumbotron, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { useAuth } from '../utils/AuthContext';

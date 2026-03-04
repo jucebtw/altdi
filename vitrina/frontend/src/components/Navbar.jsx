@@ -27,7 +27,7 @@ const Navbar = () => {
             {user ? (
               <>
                 <Nav.Item className="d-flex align-items-center me-2">
-                  <Link to="/master" className="btn btn-success text-white" style={{ borderRadius: '4px', padding: '8px 16px', fontSize: '16px', fontWeight: 'bold' }}>
+                  <Link to="/master" className="btn btn-success text-white" style={{ borderRadius: '4px', padding: '8px 16px', fontSize: '16px', fontWeight: 'bold', textDecoration: 'none' }}>
                     ➕ Добавить товар
                   </Link>
                 </Nav.Item>
