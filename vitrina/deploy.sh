@@ -72,7 +72,17 @@ fi
 # Настройка Prisma
 if [ -f "prisma/schema.prisma" ]; then
   npx prisma generate
-  npx prisma migrate deploy
+  
+  # Проверка существования БД
+  if [ -f "database.sqlite" ]; then
+    # Если БД существует, используем db push (синхронизирует схему без миграций)
+    echo -e "${YELLOW}База данных существует, синхронизация схемы...${NC}"
+    npx prisma db push --accept-data-loss || true
+  else
+    # Если БД не существует, создаем миграцию
+    echo -e "${YELLOW}Создание миграции...${NC}"
+    npx prisma migrate dev --name init || npx prisma db push
+  fi
 fi
 
 # Создание systemd service для PM2 (опционально)
