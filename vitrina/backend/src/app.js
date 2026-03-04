@@ -14,7 +14,8 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const app = express();
 
 // Trust proxy (важно для работы за Nginx)
-app.set('trust proxy', true);
+// Указываем конкретный proxy вместо true для безопасности rate-limit
+app.set('trust proxy', 1); // Доверяем только первому прокси (Nginx)
 
 // Middleware
 app.use(helmet());
