@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  User
+  Master
+  Admin
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  fio          String
+  passwordHash String    @map("password_hash")
+  role         Role      @default(User)
+  telegramId   String?   @map("telegram_id")
+  verified     Boolean   @default(false)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  
+  products     Product[]
+  
+  @@map("users")
+}
+
+model Product {
+  id           Int      @id @default(autoincrement())
+  masterId     Int      @map("master_id")
+  title        String
+  description  String
+  price        Float
+  images       String   // JSON array as string
+  category     String
+  material     String
+  priorityLevel Int     @default(0) @map("priority_level")
+  sizeBoost    Int      @default(0) @map("size_boost")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  
+  master       User     @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  
+  @@map("products")
+}

@@ -1,0 +1,144 @@
+/* Алтайская тема - горы, кедр, этнический стиль */
+
+:root {
+  --altai-primary: #2d5016; /* Темно-зеленый (кедр) */
+  --altai-secondary: #5a7c3a; /* Средне-зеленый */
+  --altai-accent: #8b6f47; /* Коричневый (дерево) */
+  --altai-mountain: #6b8e9f; /* Голубой (небо/горы) */
+  --altai-light: #f4f1e8; /* Светлый бежевый */
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, var(--altai-light) 0%, #e8e3d5 100%);
+  min-height: 100vh;
+}
+
+.main-container {
+  min-height: calc(100vh - 56px);
+  padding: 20px 0;
+}
+
+/* Карточки товаров с динамическим размером */
+.shelf-card {
+  background: linear-gradient(180deg, #ffffff 0%, var(--altai-light) 100%);
+  border: 2px solid var(--altai-accent);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: calc(200px + var(--size-boost, 0) * 50px);
+  max-width: 100%;
+}
+
+.shelf-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.shelf-card .card-img-top {
+  border-radius: 10px 10px 0 0;
+}
+
+/* Фоновое изображение для карточек (опционально) */
+.shelf-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z" fill="rgba(139,111,71,0.05)"/></svg>');
+  background-size: cover;
+  opacity: 0.3;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+/* Кнопки в стиле Алтая */
+.btn-primary {
+  background-color: var(--altai-primary);
+  border-color: var(--altai-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--altai-secondary);
+  border-color: var(--altai-secondary);
+}
+
+/* Навбар */
+.navbar-dark {
+  background-color: var(--altai-primary) !important;
+}
+
+/* Карточки функций */
+.feature-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: scale(1.05);
+}
+
+/* Hero секция */
+.hero-section {
+  padding: 40px 0;
+}
+
+.hero-section h1 {
+  color: var(--altai-primary);
+  font-weight: bold;
+}
+
+/* Формы */
+.form-control:focus {
+  border-color: var(--altai-accent);
+  box-shadow: 0 0 0 0.2rem rgba(139, 111, 71, 0.25);
+}
+
+/* Модальные окна */
+.modal-header {
+  background-color: var(--altai-primary);
+  color: white;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+/* Таблицы */
+.table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: var(--altai-primary);
+  color: white;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .shelf-card {
+    width: 100% !important;
+  }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.shelf-card {
+  animation: fadeIn 0.5s ease;
+}
