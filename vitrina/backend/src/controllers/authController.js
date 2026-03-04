@@ -64,13 +64,24 @@ const register = async (req, res) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     telegramService.storeCode(telegram_username, code, user.id);
     
-    const sent = await telegramService.sendVerificationCode(telegram_username, code);
-    
-    if (!sent) {
-      // Если не удалось отправить, удаляем пользователя
+    try {
+      const sent = await telegramService.sendVerificationCode(telegram_username, code);
+      
+      if (!sent) {
+        // Если не удалось отправить, удаляем пользователя
+        await prisma.user.delete({ where: { id: user.id } });
+        return res.status(400).json({ 
+          error: 'Не удалось отправить код в Telegram. Убедитесь, что вы написали боту /start перед регистрацией. Telegram username: @' + telegram_username 
+        });
+      }
+    } catch (telegramError) {
+      // Логируем ошибку Telegram, но не удаляем пользователя
+      console.error('Ошибка отправки в Telegram:', telegramError);
+      // Удаляем пользователя только если это критическая ошибка
       await prisma.user.delete({ where: { id: user.id } });
-      return res.status(400).json({ 
-        error: 'Не удалось отправить код в Telegram. Убедитесь, что вы написали боту /start перед регистрацией. Telegram username: @' + telegram_username 
+      return res.status(500).json({ 
+        error: 'Ошибка отправки кода верификации. Проверьте настройки Telegram бота.',
+        details: process.env.NODE_ENV === 'development' ? telegramError.message : undefined
       });
     }
 
@@ -80,6 +91,7 @@ const register = async (req, res) => {
     });
   } catch (error) {
     console.error('Ошибка регистрации:', error);
+    console.error('Stack trace:', error.stack);
     
     // Более детальные сообщения об ошибках
     if (error.code === 'P2002') {
@@ -88,6 +100,15 @@ const register = async (req, res) => {
     
     if (error.message && error.message.includes('Unique constraint')) {
       return res.status(400).json({ error: 'Пользователь уже существует' });
+    }
+    
+    // Проверка на ошибки Prisma
+    if (error.code && error.code.startsWith('P')) {
+      console.error('Prisma error:', error.code, error.meta);
+      return res.status(500).json({ 
+        error: 'Ошибка базы данных',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
     
     res.status(500).json({ 

@@ -12,39 +12,60 @@ const generateCode = () => {
 
 const sendVerificationCode = async (telegramUsername, code) => {
   try {
+    // Проверка токена бота
+    if (!config.tgBotToken) {
+      console.error('TG_BOT_TOKEN не настроен в .env');
+      throw new Error('Telegram бот не настроен');
+    }
+
     // Убираем @ если есть
-    const username = telegramUsername.replace('@', '');
+    const username = telegramUsername.replace('@', '').trim();
+    
+    if (!username) {
+      console.error('Пустой Telegram username');
+      return false;
+    }
     
     // Пытаемся найти сохраненный chat_id
     const chatId = userChatIds.get(username);
     
     if (chatId) {
       // Отправляем по chat_id (надежный способ)
-      await bot.telegram.sendMessage(
-        chatId,
-        `Ваш код верификации: ${code}\n\nВведите этот код на сайте для завершения регистрации.`
-      );
-      return true;
-    } else {
-      // Если chat_id не найден, пытаемся отправить по username
-      // Это работает только если пользователь уже писал боту
       try {
         await bot.telegram.sendMessage(
-          `@${username}`,
+          chatId,
           `Ваш код верификации: ${code}\n\nВведите этот код на сайте для завершения регистрации.`
         );
+        console.log(`Код отправлен по chat_id для ${username}`);
         return true;
       } catch (err) {
-        console.error('Не удалось отправить сообщение по username:', err.response?.data || err.message);
-        // Более детальная информация об ошибке
-        if (err.response?.error_code === 400) {
-          console.error('Пользователь не найден или не писал боту. Username:', username);
-        }
-        return false;
+        console.error('Ошибка отправки по chat_id:', err.response?.data || err.message);
+        // Пробуем по username
       }
     }
+    
+    // Если chat_id не найден или не сработал, пытаемся отправить по username
+    try {
+      await bot.telegram.sendMessage(
+        `@${username}`,
+        `Ваш код верификации: ${code}\n\nВведите этот код на сайте для завершения регистрации.`
+      );
+      console.log(`Код отправлен по username для @${username}`);
+      return true;
+    } catch (err) {
+      console.error('Не удалось отправить сообщение по username:', err.response?.data || err.message);
+      // Более детальная информация об ошибке
+      if (err.response?.error_code === 400) {
+        console.error('Пользователь не найден или не писал боту. Username:', username);
+        console.error('Инструкция: Пользователь должен сначала написать боту /start');
+      } else if (err.response?.error_code === 403) {
+        console.error('Бот заблокирован пользователем или нет доступа');
+      }
+      return false;
+    }
   } catch (error) {
-    console.error('Ошибка отправки кода в Telegram:', error);
+    console.error('Критическая ошибка отправки кода в Telegram:', error);
+    console.error('Stack:', error.stack);
     return false;
   }
 };
