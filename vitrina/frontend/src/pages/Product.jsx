@@ -78,9 +78,36 @@ const Product = () => {
             <strong>Материал:</strong> {product.material}
           </div>
           <p>{product.description}</p>
-          <Button variant="primary" size="lg">
-            Связаться с мастером
-          </Button>
+          {product.master?.telegramId ? (
+            <div className="mt-4">
+              <h5>Контакты мастера:</h5>
+              <p className="mb-2">
+                <strong>Telegram:</strong>{' '}
+                <a 
+                  href={`https://t.me/${product.master.telegramId}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-decoration-none"
+                >
+                  @{product.master.telegramId}
+                </a>
+              </p>
+              <Button 
+                variant="primary" 
+                size="lg"
+                as="a"
+                href={`https://t.me/${product.master.telegramId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                💬 Написать в Telegram
+              </Button>
+            </div>
+          ) : (
+            <div className="mt-4">
+              <p className="text-muted">Контактные данные мастера не указаны</p>
+            </div>
+          )}
         </Col>
       </Row>
     </Container>

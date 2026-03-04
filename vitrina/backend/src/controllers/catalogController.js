@@ -69,6 +69,7 @@ const getProducts = async (req, res) => {
           select: {
             id: true,
             fio: true,
+            telegramId: true,
           },
         },
       },
@@ -95,6 +96,7 @@ const getProduct = async (req, res) => {
           select: {
             id: true,
             fio: true,
+            telegramId: true,
           },
         },
       },
