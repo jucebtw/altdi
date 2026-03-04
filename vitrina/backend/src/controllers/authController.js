@@ -179,7 +179,8 @@ const login = async (req, res) => {
 
     const { fio, password } = value;
 
-    const user = await prisma.user.findUnique({
+    // Используем findFirst, так как fio не уникальное поле в схеме
+    const user = await prisma.user.findFirst({
       where: { fio },
     });
 
@@ -212,7 +213,21 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.error('Ошибка входа:', error);
-    res.status(500).json({ error: 'Ошибка сервера' });
+    console.error('Stack trace:', error.stack);
+    
+    // Более детальные сообщения об ошибках
+    if (error.code && error.code.startsWith('P')) {
+      console.error('Prisma error:', error.code, error.meta);
+      return res.status(500).json({ 
+        error: 'Ошибка базы данных при входе',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+    
+    res.status(500).json({ 
+      error: error.message || 'Ошибка сервера при входе',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
