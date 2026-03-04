@@ -10,17 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  User
-  Master
-  Admin
-}
-
 model User {
   id           Int       @id @default(autoincrement())
   fio          String
   passwordHash String    @map("password_hash")
-  role         Role      @default(User)
+  role         String    @default("User") // User, Master, Admin
   telegramId   String?   @map("telegram_id")
   verified     Boolean   @default(false)
   createdAt    DateTime  @default(now()) @map("created_at")
