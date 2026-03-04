@@ -1,12 +1,11 @@
-const YooKassa = require('yookassa-sdk');
+const axios = require('axios');
 const { PrismaClient } = require('@prisma/client');
 const config = require('../config');
 
 const prisma = new PrismaClient();
-const yooKassa = new YooKassa({
-  shopId: config.yookassa.shopId,
-  secretKey: config.yookassa.secretKey,
-});
+
+// Базовый URL для YooKassa API
+const YOOKASSA_API_URL = 'https://api.yookassa.ru/v3';
 
 // Уровни продвижения
 const PROMOTION_LEVELS = {
@@ -28,6 +27,14 @@ const PROMOTION_LEVELS = {
     sizeBoost: 3,
     name: 'Премиум продвижение',
   },
+};
+
+// Создание базовой авторизации для YooKassa
+const getAuthHeader = () => {
+  const credentials = Buffer.from(
+    `${config.yookassa.shopId}:${config.yookassa.secretKey}`
+  ).toString('base64');
+  return `Basic ${credentials}`;
 };
 
 const createPayment = async (productId, level, userId) => {
@@ -53,14 +60,23 @@ const createPayment = async (productId, level, userId) => {
       }
     }
 
-    const payment = await yooKassa.createPayment({
+    // Проверка наличия учетных данных YooKassa
+    if (!config.yookassa.shopId || !config.yookassa.secretKey) {
+      throw new Error('YooKassa не настроен. Укажите YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY в .env');
+    }
+
+    // Формирование URL для возврата (используем frontend URL)
+    const returnUrl = `${config.frontendUrl || `https://${config.domain}`}/payment/success`;
+
+    // Создание платежа через YooKassa API
+    const paymentData = {
       amount: {
         value: promotion.price.toFixed(2),
         currency: 'RUB',
       },
       confirmation: {
         type: 'redirect',
-        return_url: `${config.domain}/payment/success`,
+        return_url: returnUrl,
       },
       description: `Продвижение товара "${product.title}" - ${promotion.name}`,
       metadata: {
@@ -68,27 +84,39 @@ const createPayment = async (productId, level, userId) => {
         userId: userId.toString(),
         level: level.toString(),
       },
-    });
+    };
 
-    // Сохраняем информацию о платеже в БД (можно создать таблицу payments)
-    // Здесь упрощенная версия - используем metadata платежа
+    const response = await axios.post(
+      `${YOOKASSA_API_URL}/payments`,
+      paymentData,
+      {
+        headers: {
+          'Authorization': getAuthHeader(),
+          'Content-Type': 'application/json',
+          'Idempotence-Key': `${productId}-${level}-${Date.now()}`,
+        },
+      }
+    );
+
+    const payment = response.data;
 
     return {
       id: payment.id,
       status: payment.status,
-      confirmation_url: payment.confirmation.confirmation_url,
+      confirmation_url: payment.confirmation?.confirmation_url,
     };
   } catch (error) {
-    console.error('Ошибка создания платежа:', error);
+    console.error('Ошибка создания платежа:', error.response?.data || error.message);
     throw error;
   }
 };
 
 const handleWebhook = async (event) => {
   try {
+    // YooKassa отправляет события в формате { event: 'payment.succeeded', object: {...} }
     if (event.event === 'payment.succeeded') {
       const payment = event.object;
-      const { productId, userId, level } = payment.metadata;
+      const { productId, userId, level } = payment.metadata || {};
 
       if (!productId || !userId || !level) {
         console.error('Отсутствуют метаданные платежа');

@@ -29,7 +29,6 @@
     "nodemailer": "^6.9.7",
     "prisma": "^5.0.0",
     "telegraf": "^4.15.0",
-    "yookassa-sdk": "^2.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

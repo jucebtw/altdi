@@ -29,11 +29,12 @@ router.post('/create', authMiddleware, async (req, res) => {
 });
 
 // Webhook от YooKassa
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/webhook', express.json(), async (req, res) => {
   try {
-    // YooKassa отправляет подписанные события
-    // В реальном приложении нужно проверить подпись
-    const event = JSON.parse(req.body);
+    // YooKassa отправляет события в формате JSON
+    // В реальном приложении нужно проверить подпись запроса
+    // Для проверки подписи используйте заголовок X-YooMoney-Signature
+    const event = req.body;
     
     await paymentService.handleWebhook(event);
     
