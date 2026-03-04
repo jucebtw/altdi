@@ -1,8 +1,11 @@
 import { Container, Row, Col, Jumbotron } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import { useAuth } from '../utils/AuthContext';
 
 const Home = () => {
+  const { user } = useAuth();
+
   return (
     <Container>
       <Row className="mt-5">
@@ -12,11 +15,20 @@ const Home = () => {
             <p className="lead mb-4">
               Уникальные изделия ручной работы от талантливых мастеров Алтайского края
             </p>
-            <Link to="/catalog">
-              <Button variant="primary" size="lg">
-                Перейти в каталог
-              </Button>
-            </Link>
+            <div className="d-flex gap-3 justify-content-center flex-wrap">
+              <Link to="/catalog">
+                <Button variant="primary" size="lg">
+                  Перейти в каталог
+                </Button>
+              </Link>
+              {user && (
+                <Link to="/master">
+                  <Button variant="success" size="lg">
+                    ➕ Добавить товар
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
         </Col>
       </Row>

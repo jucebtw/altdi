@@ -26,11 +26,9 @@ const Navbar = () => {
           <Nav>
             {user ? (
               <>
-                {user.role === 'Master' && (
-                  <Nav.Link as={Link} to="/master">
-                    Кабинет мастера
-                  </Nav.Link>
-                )}
+                <Nav.Link as={Link} to="/master">
+                  Мои товары
+                </Nav.Link>
                 {user.role === 'Admin' && (
                   <Nav.Link as={Link} to="/admin">
                     Админ-панель

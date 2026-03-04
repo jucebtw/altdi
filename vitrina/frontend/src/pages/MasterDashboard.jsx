@@ -20,7 +20,7 @@ const MasterDashboard = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (user && (user.role === 'Master' || user.role === 'Admin')) {
+    if (user) {
       loadProducts();
     }
   }, [user]);
@@ -102,10 +102,10 @@ const MasterDashboard = () => {
     }
   };
 
-  if (!user || (user.role !== 'Master' && user.role !== 'Admin')) {
+  if (!user) {
     return (
       <Container className="mt-5">
-        <Alert variant="danger">Доступ запрещен</Alert>
+        <Alert variant="danger">Требуется авторизация</Alert>
       </Container>
     );
   }
@@ -114,8 +114,10 @@ const MasterDashboard = () => {
     <Container className="mt-4">
       <Row className="mb-4">
         <Col>
-          <h2>Кабинет мастера</h2>
-          <Button onClick={() => handleOpenModal()}>Добавить товар</Button>
+          <h2>Мои товары</h2>
+          <Button variant="success" onClick={() => handleOpenModal()}>
+            ➕ Добавить товар
+          </Button>
         </Col>
       </Row>
 

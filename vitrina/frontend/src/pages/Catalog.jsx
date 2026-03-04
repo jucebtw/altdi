@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../utils/AuthContext';
 import api from '../utils/api';
 
 const Catalog = () => {
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [materials, setMaterials] = useState([]);
@@ -52,6 +54,15 @@ const Catalog = () => {
   return (
     <Container className="mt-4">
       <Row>
+        {user && (
+          <Col xs={12} className="mb-3">
+            <Link to="/master">
+              <Button variant="success" size="lg" className="w-100">
+                ➕ Добавить товар
+              </Button>
+            </Link>
+          </Col>
+        )}
         <Col md={3}>
           <Card className="mb-4">
             <Card.Header>Фильтры</Card.Header>

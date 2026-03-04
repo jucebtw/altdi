@@ -32,9 +32,9 @@ const upload = multer({
   },
 });
 
-// Все routes требуют авторизации и роли Master или Admin
+// Все routes требуют авторизации (любой зарегистрированный пользователь может добавлять товары)
 router.use(authMiddleware);
-router.use(requireRole('Master', 'Admin'));
+// Убрали проверку роли - теперь все зарегистрированные пользователи могут добавлять товары
 
 router.get('/products', productController.getMasterProducts);
 router.post('/products', upload.array('images', 10), productController.createProduct);
