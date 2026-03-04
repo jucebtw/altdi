@@ -68,20 +68,29 @@ const register = async (req, res) => {
       const sent = await telegramService.sendVerificationCode(telegram_username, code);
       
       if (!sent) {
-        // Если не удалось отправить, удаляем пользователя
-        await prisma.user.delete({ where: { id: user.id } });
-        return res.status(400).json({ 
-          error: 'Не удалось отправить код в Telegram. Убедитесь, что вы написали боту /start перед регистрацией. Telegram username: @' + telegram_username 
+        // Если не удалось отправить, НЕ удаляем пользователя сразу
+        // Пользователь может ввести код вручную, если знает его
+        // Или можно сделать повторную отправку
+        console.warn(`Не удалось отправить код в Telegram для ${telegram_username}, но пользователь создан`);
+        
+        // Возвращаем успех, но с предупреждением
+        // В реальном приложении можно добавить кнопку "Отправить код повторно"
+        return res.status(200).json({ 
+          message: 'Пользователь создан, но код не отправлен в Telegram',
+          warning: 'Не удалось отправить код. Убедитесь, что вы написали боту /start в Telegram (@' + telegram_username + '). Вы можете попробовать зарегистрироваться снова или связаться с администратором.',
+          user_id: user.id,
+          // Для разработки можно вернуть код (в продакшене убрать!)
+          code: process.env.NODE_ENV === 'development' ? code : undefined
         });
       }
     } catch (telegramError) {
-      // Логируем ошибку Telegram, но не удаляем пользователя
+      // Логируем ошибку Telegram
       console.error('Ошибка отправки в Telegram:', telegramError);
-      // Удаляем пользователя только если это критическая ошибка
-      await prisma.user.delete({ where: { id: user.id } });
-      return res.status(500).json({ 
-        error: 'Ошибка отправки кода верификации. Проверьте настройки Telegram бота.',
-        details: process.env.NODE_ENV === 'development' ? telegramError.message : undefined
+      // НЕ удаляем пользователя - он может попробовать верификацию позже
+      return res.status(200).json({ 
+        message: 'Пользователь создан, но возникла ошибка при отправке кода',
+        warning: 'Ошибка отправки кода верификации. Попробуйте связаться с администратором или зарегистрироваться снова.',
+        user_id: user.id
       });
     }
 

@@ -13,6 +13,9 @@ const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 
+// Trust proxy (важно для работы за Nginx)
+app.set('trust proxy', true);
+
 // Middleware
 app.use(helmet());
 app.use(cors({
