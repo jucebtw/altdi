@@ -58,6 +58,22 @@ const Home = () => {
           </div>
         </Col>
       </Row>
+      {!user && (
+        <Row className="mt-4">
+          <Col>
+            <Alert variant="info" className="text-center">
+              <strong>Хотите добавить свои товары?</strong>
+              <br />
+              Зарегистрируйтесь и напишите боту{' '}
+              <a href="https://t.me/altdiverf_bot" target="_blank" rel="noopener noreferrer">
+                @altdiverf_bot
+              </a>{' '}
+              команду <strong>/start</strong> для получения кода верификации
+            </Alert>
+          </Col>
+        </Row>
+      )}
+      </Row>
     </Container>
   );
 };

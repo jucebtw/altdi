@@ -97,6 +97,13 @@ const Register = () => {
                     <Form.Text className="text-muted">
                       Код верификации будет отправлен в Telegram
                     </Form.Text>
+                    <Alert variant="info" className="mt-2">
+                      <strong>⚠️ Важно!</strong> Перед регистрацией обязательно напишите боту{' '}
+                      <a href="https://t.me/altdiverf_bot" target="_blank" rel="noopener noreferrer">
+                        @altdiverf_bot
+                      </a>{' '}
+                      команду <strong>/start</strong>, иначе код верификации не будет отправлен!
+                    </Alert>
                   </Form.Group>
                   <Button variant="primary" type="submit" disabled={loading} className="w-100">
                     {loading ? 'Регистрация...' : 'Зарегистрироваться'}
@@ -124,7 +131,17 @@ const Register = () => {
             <Card.Body>
               {error && <Alert variant="danger">{error}</Alert>}
               <Alert variant="info">
-                Код верификации отправлен в Telegram на @{formData.telegram_username}
+                <strong>Код верификации отправлен в Telegram</strong>
+                <br />
+                Проверьте сообщения от бота{' '}
+                <a href="https://t.me/altdiverf_bot" target="_blank" rel="noopener noreferrer">
+                  @altdiverf_bot
+                </a>{' '}
+                на аккаунте @{formData.telegram_username}
+                <br />
+                <small className="text-muted">
+                  Если код не пришел, убедитесь, что вы написали боту /start перед регистрацией
+                </small>
               </Alert>
               <Form onSubmit={handleVerify}>
                 <Form.Group className="mb-3">
